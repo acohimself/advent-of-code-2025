@@ -1,0 +1,13 @@
+# Rust build artifacts
+/target/
+Cargo.lock
+
+# Input files (AoC asks not to share puzzle inputs)
+input/*.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
