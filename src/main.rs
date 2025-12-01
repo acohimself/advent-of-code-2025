@@ -1,4 +1,4 @@
-use advent_of_code::days;
+use advent_of_code_2025::days;
 use std::env;
 use std::time::Instant;
 

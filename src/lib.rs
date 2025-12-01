@@ -3,7 +3,7 @@ pub mod days;
 use std::fs;
 use std::path::Path;
 
-const YEAR: u32 = 2024;
+const YEAR: u32 = 2025;
 
 /// Download input for a given day from adventofcode.com
 /// Requires AOC_SESSION environment variable to be set with your session cookie
