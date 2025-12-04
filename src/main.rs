@@ -30,6 +30,7 @@ fn main() {
         // Add more days here as you implement them
         2 => days::day02::solve(),
         3 => days::day03::solve(),
+        4 => days::day04::solve(),
         _ => println!("Day {} not yet implemented", day),
     }
 

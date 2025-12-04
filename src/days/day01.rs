@@ -35,7 +35,7 @@ fn part2(input: &str) -> i32 {
         let value: i32 = r[1..].parse().unwrap();
         password += value / 100; // full rotations
 
-        // count times we pass 0
+        // count times we rotate past 0
         if r.starts_with("L") {
             let was_at_zero = dial == 0;
             dial -= value % 100;

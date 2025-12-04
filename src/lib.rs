@@ -8,8 +8,8 @@ const YEAR: u32 = 2025;
 /// Download input for a given day from adventofcode.com
 /// Requires AOC_SESSION environment variable to be set with your session cookie
 fn download_input(day: u8) -> Result<String, Box<dyn std::error::Error>> {
-    let session = std::env::var("AOC_SESSION")
-        .map_err(|_| "AOC_SESSION environment variable not set")?;
+    let session =
+        std::env::var("AOC_SESSION").map_err(|_| "AOC_SESSION environment variable not set")?;
 
     let url = format!("https://adventofcode.com/{}/day/{}/input", YEAR, day);
 
@@ -52,7 +52,10 @@ pub fn read_input(day: u8) -> String {
     println!("Input file not found, attempting to download...");
     match download_input(day) {
         Ok(input) => input,
-        Err(e) => panic!("Failed to download input for day {}: {}\n\nMake sure:\n1. AOC_SESSION environment variable is set\n2. The puzzle for day {} has been released", day, e, day),
+        Err(e) => panic!(
+            "Failed to download input for day {}: {}\n\nMake sure:\n1. AOC_SESSION environment variable is set\n2. The puzzle for day {} has been released",
+            day, e, day
+        ),
     }
 }
 
@@ -77,4 +80,92 @@ where
 /// Useful for puzzles where input is separated into groups
 pub fn split_by_blank_lines(input: &str) -> Vec<String> {
     input.split("\n\n").map(|s| s.to_string()).collect()
+}
+
+#[derive(Debug, Clone)]
+struct Grid<T> {
+    width: usize,
+    height: usize,
+    data: Vec<T>,
+}
+
+impl Grid<char> {
+    /// Parse a grid of chars from a multiline string.
+    /// Assumes all lines have the same length.
+    fn parse(input: &str) -> Self {
+        let lines: Vec<&str> = input.lines().collect();
+        let height = lines.len();
+        let width = lines.first().map_or(0, |l| l.chars().count());
+
+        assert!(width > 0, "grid must not be empty");
+
+        let mut data = Vec::with_capacity(width * height);
+        for line in lines {
+            let len = line.chars().count();
+            assert_eq!(len, width, "all lines must have the same length");
+            data.extend(line.chars());
+        }
+
+        Grid {
+            width,
+            height,
+            data,
+        }
+    }
+}
+
+impl<T> Grid<T> {
+    fn index(&self, x: usize, y: usize) -> usize {
+        y * self.width + x
+    }
+
+    fn in_bounds(&self, x: usize, y: usize) -> bool {
+        x < self.width && y < self.height
+    }
+
+    fn get(&self, x: usize, y: usize) -> Option<&T> {
+        if self.in_bounds(x, y) {
+            Some(&self.data[self.index(x, y)])
+        } else {
+            None
+        }
+    }
+
+    /// Return (x, y) indices of all 8 neighbors inside the grid.
+    fn neighbors8_indices(&self, x: usize, y: usize) -> impl Iterator<Item = (usize, usize)> + '_ {
+        const OFFSETS: [(isize, isize); 8] = [
+            (-1, -1),
+            (0, -1),
+            (1, -1),
+            (-1, 0),
+            (1, 0),
+            (-1, 1),
+            (0, 1),
+            (1, 1),
+        ];
+
+        OFFSETS.into_iter().filter_map(move |(dx, dy)| {
+            let nx = x as isize + dx;
+            let ny = y as isize + dy;
+
+            if nx >= 0 && ny >= 0 && (nx as usize) < self.width && (ny as usize) < self.height {
+                Some((nx as usize, ny as usize))
+            } else {
+                None
+            }
+        })
+    }
+
+    /// Directly iterate over neighbor values.
+    fn neighbors8(&self, x: usize, y: usize) -> impl Iterator<Item = &T> {
+        self.neighbors8_indices(x, y)
+            .map(move |(nx, ny)| &self.data[self.index(nx, ny)])
+    }
+
+    fn set(&mut self, x: usize, y: usize, value: T) {
+        if self.in_bounds(x, y) {
+            let idx = self.index(x, y);
+            self.data[idx] = value;
+        }
+    }
 }
