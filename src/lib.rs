@@ -113,6 +113,46 @@ impl Grid<char> {
         }
     }
 }
+impl Grid<u64> {
+    fn parse_u64s(input: &str) -> Self {
+        let lines: Vec<&str> = input.lines().collect();
+        let height = lines.len();
+        let width = lines.first().map_or(0, |l| l.split_whitespace().count());
+
+        assert!(width > 0, "grid must not be empty");
+
+        let mut data = Vec::with_capacity(width * height);
+        for line in lines {
+            let len = line.split_whitespace().count();
+            assert_eq!(len, width, "all lines must have the same length");
+            data.extend(line.split_whitespace().map(|s| s.parse::<u64>().unwrap()));
+        }
+
+        Grid {
+            width,
+            height,
+            data,
+        }
+    }
+}
+
+impl<T: Copy> Grid<T> {
+    pub fn transpose(&self) -> Grid<T> {
+        let mut data = Vec::with_capacity(self.width * self.height);
+
+        for x in 0..self.width {
+            for y in 0..self.height {
+                data.push(self.data[self.index(x, y)]);
+            }
+        }
+
+        Grid {
+            width: self.height,
+            height: self.width,
+            data,
+        }
+    }
+}
 
 impl<T> Grid<T> {
     fn index(&self, x: usize, y: usize) -> usize {
@@ -129,6 +169,10 @@ impl<T> Grid<T> {
         } else {
             None
         }
+    }
+
+    pub fn col(&self, x: usize) -> impl Iterator<Item = &T> {
+        (0..self.height).map(move |y| &self.data[y * self.width + x])
     }
 
     /// Return (x, y) indices of all 8 neighbors inside the grid.
