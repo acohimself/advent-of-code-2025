@@ -63,6 +63,7 @@ pub fn read_input(day: u8) -> String {
 ///
 /// # Example
 /// ```
+/// # use advent_of_code_2025::parse_numbers;
 /// let input = "1\n2\n3";
 /// let numbers: Vec<i32> = parse_numbers(input);
 /// assert_eq!(numbers, vec![1, 2, 3]);

@@ -12,8 +12,8 @@ fn part1(input: &str) -> u64 {
     let mut answer;
     let mut grand_total = 0;
 
-    for i in 0..operations.len() {
-        match operations[i] {
+    for (i, operation) in operations.iter().enumerate() {
+        match operation {
             Op::Add => {
                 answer = 0;
                 for j in 0..numbers.height {

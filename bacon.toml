@@ -1,0 +1,14 @@
+[jobs.run]
+command = ["cargo", "run", "--", "10"]
+need_stdout = true
+
+[jobs.check]
+command = ["cargo", "check", "--all-targets"]
+need_stdout = false
+
+[jobs.clippy]
+command = ["cargo", "clippy", "--all-targets"]
+need_stdout = false
+
+[settings]
+default_job = "check"
